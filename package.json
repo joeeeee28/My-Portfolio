@@ -1,0 +1,38 @@
+{
+  "name": "clientforge-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ClientForge AI — autonomous client acquisition and digital agency operating system",
+  "scripts": {
+    "dev": "NODE_OPTIONS=\"--use-system-ca --no-warnings\" next dev -H 0.0.0.0 -p 3000",
+    "build": "NODE_OPTIONS=\"--use-system-ca --no-warnings\" next build",
+    "start": "NODE_OPTIONS=\"--use-system-ca --no-warnings\" next start -H 0.0.0.0 -p 3000",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "db:init": "NODE_OPTIONS=\"--use-system-ca --no-warnings\" tsx scripts/db-init.ts",
+    "seed": "NODE_OPTIONS=\"--use-system-ca --no-warnings\" tsx scripts/seed.ts",
+    "discovery": "NODE_OPTIONS=\"--use-system-ca --no-warnings\" tsx scripts/run-discovery.ts",
+    "e2e": "NODE_OPTIONS=\"--use-system-ca --no-warnings\" tsx scripts/e2e-lifecycle.ts",
+    "test": "NODE_OPTIONS=\"--use-system-ca --no-warnings\" tsx scripts/e2e-lifecycle.ts"
+  },
+  "dependencies": {
+    "lucide-react": "^0.462.0",
+    "nanoid": "^5.0.9",
+    "next": "^15.1.6",
+    "node-cron": "^3.0.3",
+    "node-html-parser": "^9.0.1",
+    "qrcode": "^1.5.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/node-cron": "^3.0.11",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
