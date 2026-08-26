@@ -110,12 +110,12 @@ jobs:
           path: .next
           retention-days: 7
 
-  # ── Staging deploy + smoke tests ───────────────────────────
+  # ── Staging deploy + smoke tests (optional) ─────────────────
   staging:
     name: Deploy Staging & Smoke Test
     runs-on: ubuntu-latest
     needs: [test, build, security]
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && false  # Disabled until environment is configured
     environment: staging
     steps:
       - uses: actions/checkout@v4
@@ -131,6 +131,11 @@ jobs:
         with:
           name: build
           path: .next
+
+      - name: Initialize database
+        run: npm run db:init
+        env:
+          NODE_ENV: production
 
       - name: Start staging server
         run: npm run start &
@@ -150,8 +155,8 @@ jobs:
   production:
     name: Deploy Production
     runs-on: ubuntu-latest
-    needs: staging
-    if: github.ref == 'refs/heads/main'
+    needs: build  # Changed from 'staging' to 'build' since staging is disabled
+    if: github.ref == 'refs/heads/main' && false  # Disabled until deployment is configured
     # Requires explicit human approval before production (§45).
     environment: production
     steps:
