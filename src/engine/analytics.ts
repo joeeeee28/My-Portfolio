@@ -334,6 +334,43 @@ export function cachedSnapshot(orgId: string, maxAgeMinutes = 30) {
 }
 
 /** Engagement rollup used by the dashboard's "Engagement" figure. */
+/** ClientForge Opportunity Score summary for the dashboard header (§59). */
+export function opportunitySummary(orgId: string): {
+  top: number;
+  topName: string;
+  critical: number;
+  high: number;
+  medium: number;
+  average: number;
+} {
+  const top = get<{ name: string; opportunity_score: number | null }>(
+    `SELECT name, opportunity_score FROM businesses
+      WHERE org_id = ? AND merged_into IS NULL AND is_archived = 0
+        AND stage NOT IN ('won','onboarding','delivery','active_client','expansion','lost')
+      ORDER BY opportunity_score DESC LIMIT 1`,
+    [orgId]
+  );
+  const counts = get<{ critical: number; high: number; medium: number; average: number }>(
+    `SELECT
+        SUM(CASE WHEN priority = 'critical' THEN 1 ELSE 0 END) AS critical,
+        SUM(CASE WHEN priority = 'high' THEN 1 ELSE 0 END) AS high,
+        SUM(CASE WHEN priority = 'medium' THEN 1 ELSE 0 END) AS medium,
+        COALESCE(AVG(opportunity_score), 0) AS average
+      FROM businesses
+      WHERE org_id = ? AND merged_into IS NULL AND is_archived = 0
+        AND stage NOT IN ('won','onboarding','delivery','active_client','expansion','lost')`,
+    [orgId]
+  );
+  return {
+    top: Math.round(top?.opportunity_score ?? 0),
+    topName: top?.name ?? 'No prospects yet',
+    critical: counts?.critical ?? 0,
+    high: counts?.high ?? 0,
+    medium: counts?.medium ?? 0,
+    average: round(counts?.average ?? 0, 0),
+  };
+}
+
 export function engagementSummary(orgId: string) {
   const since = new Date(Date.now() - 7 * 86_400_000).toISOString();
   return {

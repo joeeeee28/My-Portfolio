@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { boot } from '@/lib/boot';
 import { getSession } from '@/lib/session';
 import { actionCenter } from '@/engine/briefing';
+import { opportunitySummary } from '@/engine/analytics';
 import { smartQueues } from '@/engine/queues';
 import { PILLARS, BRAND, serviceLabel } from '@/lib/brand';
 import { relativeFromNow } from '@/lib/time';
@@ -20,6 +21,7 @@ export default async function DashboardPage() {
   const { briefing, queue, funnel, automation, opportunities, projects, recommendations } = center;
 
   const queueCount = (key: string) => queues.find((q) => q.key === key)?.count ?? 0;
+  const scoreSummary = opportunitySummary(orgId);
   const isEmpty = funnel.discovered === 0;
 
   return (
@@ -45,6 +47,18 @@ export default async function DashboardPage() {
           </div>
         )}
       </section>
+
+      {/* ── Opportunity Score summary ────────────────────── */}
+      <div className="mt-3">
+        <Stats
+          items={[
+            { label: 'Opportunity Score — highest', value: scoreSummary.top, detail: scoreSummary.topName, tone: 'critical' },
+            { label: 'Critical opportunities', value: scoreSummary.critical },
+            { label: 'High opportunities', value: scoreSummary.high },
+            { label: 'Awaiting a decision', value: queue.length, detail: 'in the Action Queue' },
+          ]}
+        />
+      </div>
 
       {/* ── Pillar strip ─────────────────────────────────── */}
       <div className="mt-3">
@@ -99,7 +113,11 @@ export default async function DashboardPage() {
                         <div className="queue-reason">{item.reason}</div>
                       </div>
                       <div className="row" style={{ flexShrink: 0 }}>
-                        {item.score !== null && <Score value={item.score} />}
+                        {item.score !== null && (
+                          <span title="ClientForge Opportunity Score">
+                            <Score value={item.score} />
+                          </span>
+                        )}
                         <QueueActionButton item={item} />
                       </div>
                     </div>
@@ -128,7 +146,7 @@ export default async function DashboardPage() {
             <div>
               <SectionHead
                 title="New Opportunities"
-                hint="Highest-scoring prospects in the hub"
+                hint="Ranked by ClientForge Opportunity Score"
                 right={
                   <Link href="/prospects" className="btn btn-sm">
                     Prospect Hub
