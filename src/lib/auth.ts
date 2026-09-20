@@ -10,7 +10,7 @@
  */
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import crypto from 'node:crypto';
+import crypto from 'crypto';
 import { get, run } from '@/db';
 import { nowIso } from '@/lib/id';
 import { audit } from '@/lib/logging';

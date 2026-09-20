@@ -120,7 +120,7 @@ export async function httpText(url: string, opts: HttpOptions = {}): Promise<Htt
 
 /** Raw TCP/TLS probe used by the website auditor to measure response time and TLS. */
 export async function probeHost(hostname: string, port: number, timeoutMs = 8000): Promise<{ ok: boolean; ms: number; error?: string }> {
-  const net = await import('node:net');
+  const net = await import('net');
   const started = Date.now();
   return new Promise((resolve) => {
     const socket = net.connect({ host: hostname, port, timeout: timeoutMs });
@@ -142,7 +142,7 @@ export async function probeTls(hostname: string, timeoutMs = 8000): Promise<{
   daysRemaining?: number;
   error?: string;
 }> {
-  const tls = await import('node:tls');
+  const tls = await import('tls');
   return new Promise((resolve) => {
     const socket = tls.connect({ host: hostname, port: 443, servername: hostname, timeout: timeoutMs, rejectUnauthorized: false });
     const fail = (error: string) => {

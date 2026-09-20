@@ -37,6 +37,9 @@
     "react-dom": "^19.0.0",
     "zod": "^3.24.1"
   },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/node-cron": "^3.0.11",

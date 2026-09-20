@@ -1,11 +1,26 @@
-node_modules
-.next
-.data
-*.db
-*.db-wal
-*.db-shm
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Next.js
+.next/
+out/
+
+# Production
+build/
+dist/
+
+# SQLite data
+.data/
+
+# Sandbox isolates
+isolate/
+
+# Misc
 .DS_Store
-.env
-.env*.local
-next-env.d.ts
 *.tsbuildinfo
+
+# Env files (managed via Keys UI)
+.env
+.env.local
+.env*.local

@@ -15,8 +15,8 @@
  *
  * Everything fails closed: if we cannot prove an address is public, we refuse.
  */
-import dns from 'node:dns/promises';
-import net from 'node:net';
+import dns from 'dns/promises';
+import net from 'net';
 
 export interface UrlVerdict {
   safe: boolean;

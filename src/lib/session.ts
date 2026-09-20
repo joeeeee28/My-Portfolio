@@ -11,7 +11,7 @@
  * `issueSession()` and is called from those contexts only.
  */
 import { cookies } from 'next/headers';
-import crypto from 'node:crypto';
+import crypto from 'crypto';
 import { get, run } from '@/db';
 import { id, nowIso, initials } from '@/lib/id';
 import { bootstrapOrg, type UserRow } from '@/lib/settings';

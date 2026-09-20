@@ -8,8 +8,8 @@
  *
  * Takes a backup before applying (§44) unless explicitly disabled.
  */
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from 'fs';
+import path from 'path';
 import { all, db, get, run, scalar } from './index';
 import { nowIso } from '@/lib/id';
 
@@ -174,7 +174,7 @@ export function migrateUp(opts: { backup?: boolean } = {}): MigrationResult {
 
 function checksum(sql: string): string {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const crypto = require('node:crypto') as typeof import('node:crypto');
+  const crypto = require('crypto') as typeof import('crypto');
   return crypto.createHash('sha256').update(sql).digest('hex').slice(0, 16);
 }
 

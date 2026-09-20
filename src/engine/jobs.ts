@@ -96,7 +96,7 @@ export function pruneIdempotencyKeys(orgId: string): number {
  * retried send cannot emit the same message twice.
  */
 export function idempotencyKey(parts: (string | number | null | undefined)[]): string {
-  const crypto = require('node:crypto') as typeof import('node:crypto');
+  const crypto = require('crypto') as typeof import('crypto');
   return crypto.createHash('sha256').update(parts.filter(Boolean).join('|')).digest('hex').slice(0, 32);
 }
 

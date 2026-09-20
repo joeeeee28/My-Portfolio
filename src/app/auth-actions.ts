@@ -8,7 +8,7 @@
  * usable as a lookup key if the database leaks.
  */
 import { cookies } from 'next/headers';
-import crypto from 'node:crypto';
+import crypto from 'crypto';
 import { redirect } from 'next/navigation';
 import { all, get, run } from '@/db';
 import { nowIso } from '@/lib/id';

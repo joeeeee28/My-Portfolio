@@ -8,17 +8,34 @@
  * objects which do not survive Next.js RSC serialization cleanly).
  */
 import { DatabaseSync } from 'node:sqlite';
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from 'fs';
+import path from 'path';
 
 const DB_DIR = path.join(process.cwd(), '.data');
+const TMP_DB_DIR = '/tmp/.clientforge';
 
 /**
  * Resolved lazily rather than at module load: ES import hoisting would otherwise
  * evaluate OS_DATABASE before a test harness or script has a chance to set it.
  */
 function dbFile(): string {
-  return process.env.OS_DATABASE ?? path.join(DB_DIR, 'acquisition.db');
+  if (process.env.OS_DATABASE) return process.env.OS_DATABASE;
+  // In serverless environments (Vercel) the project root is read-only.
+  // Use /tmp as a writable fallback — data will be ephemeral but the app
+  // will at least boot and serve pages.
+  try {
+    fs.mkdirSync(DB_DIR, { recursive: true, mode: 0o755 });
+    // Quick write-test: if we can't create a sentinel file, the dir is RO.
+    const probe = path.join(DB_DIR, '.write-probe');
+    fs.writeFileSync(probe, '1', { flag: 'wx' });
+    fs.unlinkSync(probe);
+  } catch {
+    try {
+      fs.mkdirSync(TMP_DB_DIR, { recursive: true });
+    } catch { /* best effort */ }
+    return path.join(TMP_DB_DIR, 'acquisition.db');
+  }
+  return path.join(DB_DIR, 'acquisition.db');
 }
 
 let _db: DatabaseSync | null = null;

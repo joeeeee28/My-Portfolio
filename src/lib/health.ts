@@ -107,7 +107,7 @@ export function checkProviders(orgId: string): ComponentHealth[] {
 
 export function checkDisk(): ComponentHealth {
   try {
-    const stats = require('node:fs').statfsSync(process.cwd()) as { bavail: bigint; bsize: bigint };
+    const stats = require('fs').statfsSync(process.cwd()) as { bavail: bigint; bsize: bigint };
     const freeBytes = Number(stats.bavail * stats.bsize);
     const freeGb = freeBytes / 1024 ** 3;
     if (freeGb < 1) return { component: 'disk', status: 'unhealthy', detail: `${freeGb.toFixed(2)} GB free` };

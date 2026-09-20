@@ -6,8 +6,8 @@
  * format is self-describing so parameters can be upgraded later without
  * invalidating existing hashes.
  */
-import crypto from 'node:crypto';
-import { timingSafeEqual } from 'node:crypto';
+import crypto from 'crypto';
+import { timingSafeEqual } from 'crypto';
 
 const SCRYPT_PARAMS = { N: 16384, r: 8, p: 1, keylen: 64 };
 const SALT_BYTES = 16;

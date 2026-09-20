@@ -5,9 +5,9 @@
  * consistent even while the app is writing. Each backup is checksummed and
  * verified by reopening it and running integrity_check.
  */
-import fs from 'node:fs';
-import path from 'node:path';
-import crypto from 'node:crypto';
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
 import { DatabaseSync } from 'node:sqlite';
 import { all, db, dbPath, get, run, scalar } from './index';
 import { nowIso } from '@/lib/id';

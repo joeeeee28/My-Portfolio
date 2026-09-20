@@ -9,9 +9,9 @@
  * get `masked` values for display and the decrypted value only inside the
  * server-side provider that needs it.
  */
-import crypto from 'node:crypto';
-import fs from 'node:fs';
-import path from 'node:path';
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 import { all, get, run, tx } from '@/db';
 import { id, nowIso } from './id';
 
