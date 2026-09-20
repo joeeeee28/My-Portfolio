@@ -86,12 +86,12 @@ export default function Finance() {
 
   // Category breakdown
   const categoryTotals =
-    expenses?.reduce((acc, e) => {
+    expenses?.reduce((acc: Record<string, number>, e: any) => {
       acc[e.category] = (acc[e.category] || 0) + e.amount;
       return acc;
     }, {} as Record<string, number>) || {};
 
-  const sortedCategories = Object.entries(categoryTotals)
+  const sortedCategories = Object.entries(categoryTotals as Record<string, number>)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 6);
 
@@ -172,7 +172,7 @@ export default function Finance() {
               </p>
             ) : (
               <div className="space-y-3">
-                {sortedCategories.map(([category, amount]) => (
+                {sortedCategories.map(([category, amount]: [string, number]) => (
                   <div key={category}>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-medium text-slate-700 capitalize">
@@ -216,7 +216,7 @@ export default function Finance() {
               ]
                 .sort((a, b) => b.date - a.date)
                 .slice(0, 10)
-                .map((item) => (
+                .map((item: any) => (
                   <div
                     key={item._id}
                     className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50"

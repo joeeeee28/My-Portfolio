@@ -53,8 +53,8 @@ export default function Goals() {
     setShowModal(false);
   };
 
-  const activeGoals = goals?.filter((g) => g.status === "active") || [];
-  const completedGoals = goals?.filter((g) => g.status === "completed") || [];
+  const activeGoals = goals?.filter((g: any) => g.status === "active") || [];
+  const completedGoals = goals?.filter((g: any) => g.status === "completed") || [];
 
   const categoryColors: Record<string, string> = {
     career: "bg-blue-500",
@@ -110,7 +110,7 @@ export default function Goals() {
                   Active Goals
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {activeGoals.map((goal) => (
+                  {activeGoals.map((goal: any) => (
                     <Card key={goal._id}>
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-2">
@@ -182,7 +182,7 @@ export default function Goals() {
                       </div>
                       {goal.milestones && goal.milestones.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-slate-100 space-y-1">
-                          {goal.milestones.map((m, i) => (
+                          {goal.milestones.map((m: any, i: number) => (
                             <div
                               key={i}
                               className="flex items-center gap-2 text-xs"
@@ -236,7 +236,7 @@ export default function Goals() {
                   Completed
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {completedGoals.map((goal) => (
+                  {completedGoals.map((goal: any) => (
                     <Card key={goal._id} className="opacity-70">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">

@@ -94,7 +94,7 @@ export default function Tasks() {
   };
 
   const filteredTasks =
-    tasks?.filter((t) => {
+    tasks?.filter((t: any) => {
       if (activeTab === "all") return true;
       return t.status === activeTab;
     }) || [];

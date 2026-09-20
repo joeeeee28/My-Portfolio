@@ -37,7 +37,7 @@ export default function Habits() {
   const todayStart = getStartOfDay();
   const todayCompletions =
     completions?.filter(
-      (c) => c.date === todayStart && c.completed
+      (c: any) => c.date === todayStart && c.completed
     ) || [];
 
   const isCompletedToday = (habitId: string) =>
@@ -119,7 +119,7 @@ export default function Habits() {
           />
         ) : (
           <div className="space-y-3">
-            {habits?.map((habit) => {
+            {habits?.map((habit: any) => {
               const completed = isCompletedToday(habit._id);
               const streakCount = streak(habit._id);
               return (

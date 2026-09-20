@@ -52,9 +52,9 @@ export default function Learning() {
   };
 
   const totalHours =
-    items?.reduce((sum, item) => sum + item.hoursStudied, 0) || 0;
+    items?.reduce((sum: number, item: any) => sum + item.hoursStudied, 0) || 0;
   const completedCount =
-    items?.filter((i) => i.status === "completed").length || 0;
+    items?.filter((i: any) => i.status === "completed").length || 0;
 
   return (
     <div>
@@ -110,7 +110,7 @@ export default function Learning() {
           />
         ) : (
           <div className="space-y-3">
-            {items?.map((item) => (
+            {items?.map((item: any) => (
               <Card key={item._id}>
                 <div className="flex items-start gap-4">
                   <div className="flex-1 min-w-0">

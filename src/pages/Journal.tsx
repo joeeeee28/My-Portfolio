@@ -138,7 +138,7 @@ export default function Journal() {
           />
         ) : (
           <div className="space-y-4">
-            {sortedEntries.map((entry) => (
+            {sortedEntries.map((entry: any) => (
               <Card key={entry._id}>
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
@@ -174,7 +174,7 @@ export default function Journal() {
                 </p>
                 {entry.tags && entry.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-3">
-                    {entry.tags.map((tag) => (
+                    {entry.tags.map((tag: string) => (
                       <Badge key={tag} variant="info">
                         {tag}
                       </Badge>

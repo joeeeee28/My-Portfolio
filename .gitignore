@@ -11,9 +11,6 @@ build/
 .env.local
 .env.production
 
-# Convex
-convex/_generated/
-
 # IDE
 .vscode/
 .idea/

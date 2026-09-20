@@ -165,7 +165,7 @@ export default function Dashboard() {
                 />
               ) : (
                 <div className="space-y-2">
-                  {todayTasks.slice(0, 6).map((task) => (
+                  {todayTasks.slice(0, 6).map((task: any) => (
                     <div
                       key={task._id}
                       className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors"
@@ -331,7 +331,7 @@ export default function Dashboard() {
               </Button>
             </CardHeader>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {activeGoals.map((goal) => (
+              {activeGoals.map((goal: any) => (
                 <div
                   key={goal._id}
                   className="p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
