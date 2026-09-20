@@ -6,50 +6,173 @@ on:
   push:
     branches: [main]
 
+# Fail fast: a broken build should not wait behind a slow job.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  # ── Lint + type check ──────────────────────────────────────
   quality:
     name: Lint & Type Check
     runs-on: ubuntu-latest
-    env:
-      VITE_CONVEX_URL: "https://placeholder.convex.cloud"
     steps:
       - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: 22
+          cache: npm
 
-      - run: bun install
+      - run: npm ci
 
-      - name: Convex codegen (no deploy)
-        run: bunx convex dev --once --configure=new || true
+      - name: Type check (strict)
+        run: npm run typecheck
 
-      - name: Type check
-        run: bun tsc -b --noEmit
+      - name: SQL integrity (INSERT column/value parity)
+        run: node scripts/check-sql.mjs
 
+      - name: Schema verification
+        run: npm run db:verify
+
+  # ── Unit + integration tests ───────────────────────────────
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Integration tests
+        run: npm run test:integration
+
+      - name: Security tests
+        run: npm run test:security
+
+      - name: End-to-end lifecycle (200 assertions)
+        run: npm run e2e
+
+  # ── Dependency audit ───────────────────────────────────────
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: npm audit (production dependencies)
+        run: npm audit --omit=dev --audit-level=high
+        continue-on-error: true
+
+      - name: Secret scan (no committed credentials)
+        run: node scripts/check-secrets.mjs
+
+  # ── Build ──────────────────────────────────────────────────
   build:
     name: Production Build
     runs-on: ubuntu-latest
-    needs: quality
-    env:
-      VITE_CONVEX_URL: "https://placeholder.convex.cloud"
+    needs: test
     steps:
       - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: 22
+          cache: npm
 
-      - run: bun install
-
-      - name: Convex codegen (no deploy)
-        run: bunx convex dev --once --configure=new || true
+      - run: npm ci
 
       - name: Build
-        run: bun run build
+        run: npm run build
         env:
           NODE_ENV: production
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: .next
+          retention-days: 7
+
+  # ── Staging deploy + smoke tests (optional) ─────────────────
+  staging:
+    name: Deploy Staging & Smoke Test
+    runs-on: ubuntu-latest
+    needs: [test, build, security]
+    if: github.ref == 'refs/heads/main' && false  # Disabled until environment is configured
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: .next
+
+      - name: Initialize database
+        run: npm run db:init
+        env:
+          NODE_ENV: production
+
+      - name: Start staging server
+        run: npm run start &
+        env:
+          NODE_ENV: production
+          PORT: 3000
+
+      - name: Wait for readiness
+        run: npx wait-on -t 120000 http://localhost:3000/api/health?live=1
+
+      - name: Smoke tests
+        run: npm run test:smoke
+        env:
+          SMOKE_BASE_URL: http://localhost:3000
+
+  # ── Production deploy (manual approval) ────────────────────
+  production:
+    name: Deploy Production
+    runs-on: ubuntu-latest
+    needs: build  # Changed from 'staging' to 'build' since staging is disabled
+    if: github.ref == 'refs/heads/main' && false  # Disabled until deployment is configured
+    # Requires explicit human approval before production (§45).
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Deploy
+        run: ./scripts/deploy.sh production
+        env:
+          NODE_ENV: production
+
+      - name: Post-deploy health check
+        run: ./scripts/deploy.sh verify
