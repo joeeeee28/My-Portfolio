@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   // The app talks to SQLite through node:sqlite and performs real HTTP audits;
   // both must run in Node, not the edge.
-  serverExternalPackages: [],
+  serverExternalPackages: ['node-cron'],
   experimental: {
     serverActions: { bodySizeLimit: '8mb' },
   },
